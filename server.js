@@ -38,6 +38,7 @@ const uploadDir = 'uploads';
 const directoryPath = path.join(__dirname, uploadDir);
 
 // get all files of upload-dir
+// ignore files starting with '.'
 const readDir = (fs, directoryPath) => {
   return new Promise((resolve, reject)=>{  
     fs.readdir(directoryPath, function (err, files) {
@@ -45,8 +46,25 @@ const readDir = (fs, directoryPath) => {
         console.log('Unable to scan directory: ' + err);
         reject(err);
       } 
-      resolve(files);
+      let cFiles = files.filter((v,i)=>{
+        if(v.indexOf('.')===0) return false;
+        return true;
+      });
+      resolve(cFiles);
     });  
+  });
+}
+
+const deleteFiles = (fs, fileArr) => {
+  fileArr.forEach(v=>{
+    if(v.indexOf('/')>-1 || v.indexOf('.')===0) throw("not allowed character in: "+v);
+    let path = directoryPath + '/' + v; 
+    try {
+      console.log("unlink: ", path)
+      fs.unlinkSync(path)
+    } catch(err) {
+      console.error(err)
+    }    
   });
 }
 
@@ -131,6 +149,16 @@ app.get('/', (req, res)=> {
 app.get('/api/files', (req, res)=>{
   readDir(fs, directoryPath)
     .then(files=>res.json({"files":files}))
+    .catch(err=>res.json({"error":err}));
+});
+
+// GET /api/del-files
+app.get('/api/del-files', (req, res)=>{
+  readDir(fs, directoryPath)
+    .then(files=>{
+      deleteFiles(fs, files);
+      res.json({deletedFiles:files});
+  })
     .catch(err=>res.json({"error":err}));
 });
 
