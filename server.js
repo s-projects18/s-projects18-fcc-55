@@ -32,9 +32,12 @@ const fs = require('fs');
 
 
 // ---------------- filesystem-stuff -------------------
-const uploadDir = 'uploads'; // create manually on console!
+// create 'uploads' manually on console!
+// uploads/.gitignore -> * (no filetransfer to github)
+const uploadDir = 'uploads';
 const directoryPath = path.join(__dirname, uploadDir);
 
+// get all files of upload-dir
 const readDir = (fs, directoryPath) => {
   return new Promise((resolve, reject)=>{  
     fs.readdir(directoryPath, function (err, files) {
