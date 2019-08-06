@@ -15,7 +15,7 @@ Certain "cross-domain" requests, notably Ajax requests, are forbidden by default
 var cors = require('cors');
 
 /*
-https://www.npmjs.com/package/multer:
+https://www.npmjs.com/package/multer
 - middleware for handling multipart/form-data, which is primarily used for uploading files
 - Multer adds a body object and a file or files object to the request object
 - body object contains the values of the text fields of the form
@@ -50,25 +50,37 @@ const readDir = (fs, directoryPath) => {
   });
 }
 
+// foo.txt -> txt
+const getSuffix = (f) => {
+   let pos = f.lastIndexOf('.');
+   if(pos==-1) return false;
+   return f.substr(pos+1).toLowerCase();  
+}
+
 
 // ---------------- config multer ----------------------
 // [1] simple version
 // this automatically creates an /uploads-folder
-// can be seen in Glitch in console
-// remove unwanted folder in console: rm -R foofolder
 // files are stored this way:
 // upfile/edff039188e557ba9eab2afa37d41602
 //var upload = multer({ dest: uploadDir });
 
-// [2] custom storage
+
+// [2] custom upload
 // folder will NOT be created automatically
+// remove unwanted folder in Glitch-console: rm -R foofolder
+
+// (a) storage
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
     let f = file.originalname.split('');
-    if(f.length>30) cb("filename too long"); // filename-length-limit
+    if(f.length>30) { // filename-length-limit
+      cb("filename too long"); 
+      return; // without this processing continues and file will be uploaded!
+    }
     let pos = f.lastIndexOf('.');
     if(pos==-1) f.push("-"+Date.now()) // no suffix: at end
     else f.splice(pos,0,"-"+Date.now()); // before suffix
@@ -76,11 +88,25 @@ var storage = multer.diskStorage({
     cb(null, filename);
   }
 });
-var limits = {
+
+// (b) limits
+let limits = {
   fileSize:1024*1024, // 1mb
   fieldNameSize:50 // "upfile"
 };
-var upload = multer({ storage: storage, limits:limits });
+
+// (c) fileFilter
+const fileFilter = (req, file, cb) => {
+  let exclude = ['exe', 'dll']; // no-suffix-files are allowed
+  if(exclude.indexOf(getSuffix(file.originalname))>-1) {
+    cb(null, false); // reject this file  
+  } else {
+    cb(null, true); // accept the file 
+  }
+}
+
+// multer-upload
+var upload = multer({ storage: storage, limits: limits, fileFilter: fileFilter });
 
 
 // ---------------- midddleware ---------------------
@@ -125,14 +151,16 @@ app.post('/api/upload', function (req, res) {
   upload.single('upfile')(req, res, err=>{
     if (err instanceof multer.MulterError) {
       res.json({"upload-error":err.message}); // we surely have an err-obj
-    } else if (err) {
+    } else if(err) {
       res.json({"error":err}); // err could be anything
+    } else if(req.file==undefined){
+      res.json({"error":"file rejected"}); 
     } else {
       // upload successfull
-      res.json({"name":req.file.originalname,"type":req.file.mimetype,"size":req.file.size});      
+      res.json({"name":req.file.originalname,"type":req.file.mimetype,"size":req.file.size});         
     }
   })
-})
+});
 
 
 
