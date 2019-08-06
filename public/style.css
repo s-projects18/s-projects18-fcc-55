@@ -1,7 +1,7 @@
 /****** Main Styling ******/
 
 body {
-	font-family: 'Roboto', sans-serif;
+	font-family: sans-serif;
 	font-size: 16px;
 	color: #222;
 	background-color: #ECF0F1;
@@ -10,22 +10,26 @@ body {
 
 .container {
 	padding: 0;
-	margin-top: 40px;
+  margin: auto;
+  width: 60%;
+  min-width: 400px;
 }
 
-.footer {
-	margin-top: 60px;
+iframe {
+  width:100%;
+  background:white;
 }
 
-ol {
-	list-style-position: inside;
-}
-ul {
-	list-style-type: none;
+.view {
+  position:relative;
+  margin-top: 40px;
+  border: 1px  solid  #aaa;
+  padding: 20px;
+
 }
 
-a {
-	color: #2574A9;
+hr {
+  margin: 1rem 0 1rem 0;
 }
 
 input {
@@ -35,17 +39,12 @@ input {
 
 }
 input#button {
-  width: 230px;
+  cursor:pointer;
 }
-.view {
-  position:relative;
-  margin: auto;
-  margin-top: 40px;
-  border: 1px  solid  #aaa;
-  padding: 20px;
-  width: 60%;
-  min-width: 400px;
+button {
+  cursor:pointer;
 }
+
 /****** Logo Div Styling ******/
 
 img {

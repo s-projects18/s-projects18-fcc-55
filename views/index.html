@@ -5,8 +5,9 @@
    <head>
       <title>File Metadata</title>
       <link rel="shortcut icon" href="https://cdn.hyperdev.com/us-east-1%3A52a203ff-088b-420f-81be-45bf559d01b1%2Ffavicon.ico" type="image/x-icon"/>
-      <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
       <link href="/public/style.css" rel="stylesheet" type="text/css">
+      <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="/public/fe.js"></script>
    </head>
 
    <body>
@@ -14,7 +15,7 @@
       <div class="container">
         <h2>API Project: File Metadata Microservice</h2>
 
-        <iframe name="myiframe"></iframe>
+        <iframe name="myiframe" id="myiframe"></iframe>
 
         <div class="view">
           <h4 id="output"></h4>
@@ -22,13 +23,9 @@
             <input id="inputfield" type="file" name="upfile">
             <input id="button" type="submit" value="Upload">
           </form>
+          <hr>
+          <button id="showFiles">show file-list</button>
         </div>
-      </div>
-      <div class="footer">
-        <p>
-          by 
-          <a href="http://www.freecodecamp.com">freeCodeCamp</a>
-        </p>
       </div>
    </body>
 
