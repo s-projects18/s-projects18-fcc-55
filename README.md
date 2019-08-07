@@ -2,7 +2,7 @@
 # API Project: File Metadata Microservice for freeCodeCamp
 
 ## Usage
-* create a form and call API to perform upload
+* create a form and call File Metadata-API to perform upload
 * example form:
 ```
 <form enctype="multipart/form-data" method="POST" action="/api/upload">
