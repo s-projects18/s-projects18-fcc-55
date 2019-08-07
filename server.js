@@ -55,6 +55,7 @@ const readDir = (fs, directoryPath) => {
   });
 }
 
+// delete files in: directoryPath
 const deleteFiles = (fs, fileArr) => {
   fileArr.forEach(v=>{
     if(v.indexOf('/')>-1 || v.indexOf('.')===0) throw("not allowed character in: "+v);
@@ -162,14 +163,16 @@ app.get('/api/del-files', (req, res)=>{
     .catch(err=>res.json({"error":err}));
 });
 
-/* /api/upload
+
+// POST /api/upload
+/* 
 form: enctype="multipart/form-data"
    input.name=upfile
 
 creates sth like:
  upfile/edff039188e557ba9eab2afa37d41602
 */
-/* [VARIANT 1]:  we cannot get 'err' here => BAD APPOACH
+/* [VARIANT 1]:  we cannot get 'err' here => BAD APPROACH
 app.post('/api/upload', upload.single('upfile'), (req, res)=>{
   res.json({"name":req.file.originalname,"type":req.file.mimetype,"size":req.file.size});
 });*/
@@ -191,6 +194,43 @@ app.post('/api/upload', function (req, res) {
 });
 
 
+// ------------------ general error-handling --------------------------
+// https://gist.github.com/zcaceres/2854ef613751563a3b506fabce4501fd
+// 404 Not Found
+// 500 Internal Server Error
+
+// [1] catch all requests that have not been catched before
+app.use((req, res, next) => {
+  let err = new Error(`tried to reach ${req.originalUrl}`);
+  err.statusCode = 404;
+  err.redirect = true; // custom property on err
+
+  // if next() receives an argument, Express will assume there was an error,
+  // skip all other routes, and send whatever was passed to error-handling middleware
+  next(err);
+});
+
+// [2] handle status code/ display error page
+app.use(function(err, req, res, next) {
+  if(typeof err == 'string') err = new Error(err); // throw('foo')  
+  console.error(err.message);
+  
+  // missing status code -> set 500 as default
+  if (!err.statusCode) {
+    err.statusCode = 500;
+  }
+
+  if (err.redirect) {
+    if(err.statusCode==404) {
+      res.sendFile(process.cwd() + '/views/error-404.html');  
+    } else {
+      res.sendFile(process.cwd() + '/views/error.html');  
+    }
+  } else {
+    // send original err data
+    res.status(err.statusCode).send(err.statusCode + ': ' + err.message); 
+  }
+});
 
 // -------------- start listening -----------------
 app.listen(process.env.PORT || 3000, function () {
