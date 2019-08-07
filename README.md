@@ -1,17 +1,34 @@
 
 # API Project: File Metadata Microservice for freeCodeCamp
 
-### Example page
-- https://purple-paladin.glitch.me/
+## Usage
+* create a form and call API to perform upload
+* example form:
+```
+<form enctype="multipart/form-data" method="POST" action="/api/upload">
+  <input id="inputfield" type="file" name="upfile">
+  <input id="button" type="submit" value="Upload">
+</form>
+```
 
-### User stories:
-1. I can submit a form that includes a file upload.
-2. The form file input field  has the "name" attribute set to "upfile". We rely on this in testing.
-3. When I submit something, I will receive the file name and size in bytes within the JSON response
+## API-commands
+
+### POST /api/upload
+* name of input-field: upfile
+* save files in: /uploads (must be created manually)
+* upload based on: https://www.npmjs.com/package/multer
+* returns file-info as JSON:
+```
+{"name":"example.txt","type":"text/plain","size":1234}
+```
+
+### GET /api/files
+* get all filenames of uploadDir as JSON
+* ignore files beginning with '.'
+
+### GET /api/del-files
+* delete all files in directoryPath
+* return deleted files as JSON
+* ignore files beginning with '.'
 
 
-### Usage :
-* Go to the main page, and upload a file using the provided form.
-
-### Hint:
-* To handle the file uploading you should use the [multer](https://www.npmjs.com/package/multer) npm package.
