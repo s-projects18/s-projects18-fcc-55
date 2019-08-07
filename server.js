@@ -196,8 +196,8 @@ app.post('/api/upload', function (req, res) {
 
 // ------------------ general error-handling --------------------------
 // https://gist.github.com/zcaceres/2854ef613751563a3b506fabce4501fd
-// 404 Not Found
-// 500 Internal Server Error
+// - 404 Not Found
+// - 500 Internal Server Error
 
 // [1] catch all requests that have not been catched before
 app.use((req, res, next) => {
