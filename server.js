@@ -211,7 +211,7 @@ app.use((req, res, next) => {
 });
 
 // [2] handle status code/ display error page
-app.use(function(err, req, res, next) {
+app.use((err, req, res, next) => {
   if(typeof err == 'string') err = new Error(err); // throw('foo')  
   console.error(err.message);
   
